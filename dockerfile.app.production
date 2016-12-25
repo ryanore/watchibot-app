@@ -1,0 +1,18 @@
+FROM node:6-onbuild
+
+RUN useradd --user-group --create-home --shell /bin/false app &&\
+  npm install --global
+
+ENV HOME=/home/app
+
+COPY package.json npm-shrinkwrap.json $HOME/app_volume/
+RUN chown -R app:app $HOME/*
+
+USER app
+WORKDIR $HOME/app_volume
+RUN npm install
+
+USER root
+COPY . $HOME/app_volume
+RUN chown -R app:app $HOME/*
+USER app
